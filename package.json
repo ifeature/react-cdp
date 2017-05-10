@@ -1,0 +1,43 @@
+{
+  "name": "react-cdp",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "bootstrap": "4.0.0-alpha.6",
+    "classnames": "^2.2.5",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.15.2",
+    "express-session": "^1.15.2",
+    "express-validator": "^3.2.0",
+    "history": "^4.6.1",
+    "jquery": "^3.2.1",
+    "lodash": "^4.17.4",
+    "mongoose": "^4.9.8",
+    "morgan": "^1.8.1",
+    "prop-types": "^15.5.8",
+    "react": "^15.5.4",
+    "react-addons-css-transition-group": "^15.5.2",
+    "react-addons-transition-group": "^15.5.2",
+    "react-dom": "^15.5.4",
+    "react-redux": "^5.0.4",
+    "react-router": "^4.1.1",
+    "react-router-redux": "^5.0.0-alpha.6",
+    "reactstrap": "^4.5.0",
+    "redux": "^3.6.0",
+    "redux-thunk": "^2.2.0",
+    "toastr": "^2.1.2"
+  },
+  "devDependencies": {
+    "react-scripts": "0.9.5",
+    "redux-devtools-extension": "^2.13.0",
+    "redux-logger": "^3.0.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "server": "node app.js",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}

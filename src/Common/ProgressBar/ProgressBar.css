@@ -1,0 +1,8 @@
+.progress {
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.progress__bar {
+  width: 100%;
+}

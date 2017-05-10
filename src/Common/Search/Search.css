@@ -1,0 +1,11 @@
+@media (min-width: 768px) {
+  .search {
+    justify-content: flex-end;
+  }
+}
+
+@media (min-width: 576px) {
+  .search__field:first-of-type {
+    margin-right: 1rem;
+  }
+}

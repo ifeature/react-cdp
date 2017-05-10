@@ -1,0 +1,16 @@
+.categories {
+  overflow-y: auto;
+}
+
+.categories__list {
+  /*margin: 0;
+  padding: 0;*/
+}
+
+.categories__add {
+  margin-bottom: 2rem;
+}
+
+.categories__item {
+  list-style-type: none;
+}

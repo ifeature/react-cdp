@@ -1,0 +1,7 @@
+.list-item {
+  display: flex;
+}
+
+.list-item__edit {
+  margin-left: auto;
+}
