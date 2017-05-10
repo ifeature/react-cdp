@@ -1,5 +1,15 @@
 import querystring from 'querystring';
 
+function createRequest(url) {
+    return fetch(url)
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            }
+        })
+        .then(data => data);
+}
+
 class Api {
     constructor() {
 
@@ -7,15 +17,31 @@ class Api {
 
     search(config) {
         const query = querystring.stringify(config);
-        return fetch(`/search?${query}`)
+        return createRequest(`/search?${query}`);
+    }
+
+    loadTasks() {
+        return createRequest('/tasks');
+    }
+
+    loadCategories() {
+        return createRequest('/categories');
+    }
+
+    addCategory({ title, parent }) {
+        return fetch('/category', {
+            method: 'POST',
+            body: JSON.stringify({ title, parent }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
             .then(response => {
                 if (response.ok) {
                     return response.json();
                 }
             })
-            .then(response => {
-                return response;
-            });
+            .then(data => data);
     }
 }
 

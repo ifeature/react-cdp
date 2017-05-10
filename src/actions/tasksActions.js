@@ -16,10 +16,10 @@ export function searchTask(config) {
     }
 }
 
-export function searchTaskRequest(task) {
+export function searchTaskRequest(result) {
     return {
         type: types.SEARCH_TASK_REQUEST,
-        payload: task
+        payload: result
     };
 }
 
@@ -37,6 +37,53 @@ export function searchTaskFailure(error) {
         payload: error
     };
 }
+
+
+
+
+
+
+export function loadTasks(config) {
+    return dispatch => {
+        dispatch(loadTasksRequest(config));
+        return api.loadTasks(config)
+            .then(result => {
+                dispatch(loadTasksSuccess(result));
+            })
+            .catch(error => {
+                dispatch(loadTasksFailure(error));
+            });
+    }
+}
+
+export function loadTasksRequest(result) {
+    return {
+        type: types.LOAD_TASKS_REQUEST,
+        payload: result
+    };
+}
+
+export function loadTasksSuccess(result) {
+    return {
+        type: types.LOAD_TASKS_SUCCESS,
+        payload: result
+    };
+}
+
+export function loadTasksFailure(error) {
+    return {
+        type: types.LOAD_TASKS_FAILURE,
+        error: true,
+        payload: error
+    };
+}
+
+
+
+
+
+
+
 
 export function tasksEdit(task) {
     return {
