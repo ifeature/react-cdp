@@ -4,11 +4,11 @@ import * as types from '../actions/actionTypes';
 
 function selectedReducer(state = initialState.selected, action) {
   switch (action.type) {
-    case types.TASKS_SEARCH:
+    case types.SEARCH_TASK_SUCCESS:
       return {...state, category: null};
     case types.TASK_ADD:
       const c = state.category;
-      c.tasks.push(action.payload.id);
+      c.tasks.push(action.payload._id);
       return {...state, ...c};
     case types.CATEGORY_SELECT:
       return {...state, category: action.payload};

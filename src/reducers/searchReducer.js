@@ -7,13 +7,17 @@ function searchReducer(state = initialState.search, action) {
             return Object.assign(
                 {},
                 state,
-                {
-                    query: {
-                        title: action.payload.title,
-                        done: action.payload.done,
-                        pristine: false
-                    }
-                });
+                { query: { title: action.payload.title, done: action.payload.done } },
+                { pristine: false }
+                );
+        case types.SEARCH_TASK_SUCCESS:
+            return Object.assign(
+                {},
+                state,
+                { data: action.payload.tasks }
+            );
+        case types.SEARCH_TASK_FAILURE:
+            return Object.assign({}, initialState.search, { pristine: false, error: true });
         default:
             return state;
     }

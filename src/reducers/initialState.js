@@ -50,10 +50,11 @@ const initialState = {
     search: {
         query: {
             title: '',
-            done: false,
-            pristine: true
+            done: false
         },
-        data: []
+        data: [],
+        error: false,
+        pristine: true
     },
     selected: {
         category: null,
