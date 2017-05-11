@@ -85,6 +85,44 @@ export function addCategoryFailure(error) {
 }
 
 
+export function editCategory(config) {
+    return dispatch => {
+        dispatch(editCategoryRequest(config));
+        return api.addCategory(config)
+            .then(result => {
+                dispatch(editCategorySuccess(result));
+            })
+            .catch(error => {
+                dispatch(editCategoryFailure(error));
+            });
+    }
+}
+
+export function editCategoryRequest(result) {
+    return {
+        type: types.DELETE_CATEGORY_REQUEST,
+        payload: result
+    };
+}
+
+export function editCategorySuccess(result) {
+    return {
+        type: types.DELETE_CATEGORY_SUCCESS,
+        payload: result
+    };
+}
+
+export function editCategoryFailure(error) {
+    return {
+        type: types.DELETE_CATEGORY_FAILURE,
+        error: true,
+        payload: error
+    };
+}
+
+
+
+
 
 
 export function categoryExpand(category) {

@@ -134,21 +134,6 @@ app.use(expressSession({secret: 'todo-app', saveUninitialized: false, resave: fa
 
 app.use('/', router);
 
-// app.use(function(err, req, res, next) {
-//   const error = new Error('Not found.');
-//   res.status = 404;
-//   next(error);
-// });
-//
-// app.use(function(err, req, res, next) {
-//   console.log(err.stack);
-//   res.locals.message = err.message;
-//   res.locals.error = req.app.get('env') === 'development' ? err : {};
-//
-//   res.status(err.status || 500);
-//   res.send({ error: err });
-// });
-
 app.use(function (err, req, res, next) {
     console.error(err.stack);
     res.status(500).send('Something broke!');

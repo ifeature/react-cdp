@@ -43,6 +43,22 @@ class Api {
             })
             .then(data => data);
     }
+
+    editCategory({ id, title }) {
+      return fetch(`/category${id}`, {
+          method: 'PUT',
+          body: JSON.stringify({ title }),
+          headers: {
+              'Content-Type': 'application/json'
+          }
+      })
+          .then(response => {
+              if (response.ok) {
+                  return response.json();
+              }
+          })
+
+    }
 }
 
 export default Api;
