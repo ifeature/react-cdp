@@ -76,14 +76,41 @@ router.get('/tasks', function(req, res, next) {
     });
 });
 
+router.post('/tasks', function(req, res, next) {
+    const task = new Task({
+        title: req.body.title,
+        done: false
+    });
+    const categoryId = req.body.category;
+    task.save().then(result => {
+        Category.findById(categoryId).then(category => {
+            console.log('cat', category);
+            console.log('result', result);
+            category.tasks.push(result._id);
+            return category.save();
+        });
+        res.send({ status: 'success', data: result });
+    });
+});
+
+router.put('/tasks/:id', function(req, res, next) {
+    const taskId = req.params.id;
+    const taskTitle = req.body.title;
+    const taskDescription = req.body.description;
+    const taskDone = req.body.done;
+
+    Task.findByIdAndUpdate(taskId, { title: taskTitle, description: taskDescription, done: taskDone }, { upsert: true, new: true }).then(result => {
+        res.send({ status: 'success', data: result });
+    });
+});
+
 router.get('/categories', function(req, res, next) {
     Category.find().then(result => {
         res.send({ categories: result });
     });
 });
 
-router.post('/category', function(req, res, next) {
-    console.log('???', req.body);
+router.post('/categories', function(req, res, next) {
     const category = new Category({
         title: req.body.title,
         expanded: false,
@@ -91,35 +118,37 @@ router.post('/category', function(req, res, next) {
         tasks: [],
         categories: []
     });
+    const parentId = req.body.parent;
 
     category.save().then(result => {
+        Category.findById(parentId).then(category => {
+            category.categories.push(result._id);
+            return category.save();
+        });
         res.send({ category: result });
     });
 });
 
-router.put('/category', function(req, res, next) {
-    const category = {
-        title: req.body.title,
-        parent: req.body.parent,
-        tasks: req.body.tasks,
-        categories: req.body.categories
-    };
+router.put('/categories/:id', function(req, res, next) {
+    const categoryId = req.params.id;
+    const categoryTitle = req.body.title;
 
-    Category.find(category).then(result => {
-        // Think about passing unique ID along with new data
-        result.save();
+    Category.findByIdAndUpdate(categoryId, { title: categoryTitle }, { upsert: true, new: true }).then(result => {
+        console.log('RES', result);
+        res.send({ status: 'success', data: result });
     });
 });
 
-router.delete('/category', function(req, res, next) {
-    const category = {
-        title: req.body.title,
-        parent: req.body.parent,
-        tasks: req.body.tasks,
-        categories: req.body.categories
-    };
+router.delete('/categories/:id', function(req, res, next) {
+    const categoryId = req.params.id;
 
-    Category.findOneAndRemove(category).exec();
+    Category.findByIdAndRemove(categoryId).then(result => {
+        Category.find({ categories: { $in: [mongoose.Types.ObjectId(categoryId)]}}).then(results => {
+            // ???
+            console.log('!!!', results);
+        });
+        res.send({ status: 'success', data: result });
+    });
 });
 
 const app = express();

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Add } from '../Common';
+import { Add } from '../common';
 import { Tree } from './components';
 import './Categories.css';
 

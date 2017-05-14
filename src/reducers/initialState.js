@@ -60,7 +60,8 @@ const initialState = {
         category: null,
         task: null
     },
-    editMode: false
+    editMode: false,
+    modal: false
 };
 
 export default initialState;

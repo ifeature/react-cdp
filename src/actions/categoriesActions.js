@@ -88,7 +88,7 @@ export function addCategoryFailure(error) {
 export function editCategory(config) {
     return dispatch => {
         dispatch(editCategoryRequest(config));
-        return api.addCategory(config)
+        return api.updateCategory(config)
             .then(result => {
                 dispatch(editCategorySuccess(result));
             })
@@ -100,27 +100,64 @@ export function editCategory(config) {
 
 export function editCategoryRequest(result) {
     return {
-        type: types.DELETE_CATEGORY_REQUEST,
+        type: types.UPDATE_CATEGORY_REQUEST,
         payload: result
     };
 }
 
 export function editCategorySuccess(result) {
     return {
-        type: types.DELETE_CATEGORY_SUCCESS,
+        type: types.UPDATE_CATEGORY_SUCCESS,
         payload: result
     };
 }
 
 export function editCategoryFailure(error) {
     return {
-        type: types.DELETE_CATEGORY_FAILURE,
+        type: types.UPDATE_CATEGORY_FAILURE,
         error: true,
         payload: error
     };
 }
 
 
+
+
+
+export function deleteCategory(config) {
+    return dispatch => {
+        dispatch(deleteCategoryRequest(config));
+        return api.deleteCategory(config)
+            .then(result => {
+                dispatch(deleteCategorySuccess(result));
+            })
+            .catch(error => {
+                dispatch(deleteCategoryFailure(error));
+            });
+    }
+}
+
+export function deleteCategoryRequest(result) {
+    return {
+        type: types.DELETE_CATEGORY_REQUEST,
+        payload: result
+    };
+}
+
+export function deleteCategorySuccess(result) {
+    return {
+        type: types.DELETE_CATEGORY_SUCCESS,
+        payload: result
+    };
+}
+
+export function deleteCategoryFailure(error) {
+    return {
+        type: types.DELETE_CATEGORY_FAILURE,
+        error: true,
+        payload: error
+    };
+}
 
 
 
@@ -135,13 +172,6 @@ export function categoryExpand(category) {
 export function categorySelect(category) {
     return {
         type: types.CATEGORY_SELECT,
-        payload: category
-    };
-}
-
-export function categoryEdit(category) {
-    return {
-        type: types.CATEGORY_EDIT,
         payload: category
     };
 }

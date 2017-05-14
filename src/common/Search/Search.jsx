@@ -27,7 +27,7 @@ class Search extends Component {
             <div className={this.props.className}>
                 <Form className="search" onSubmit={this.handleSubmit} inline>
                     <FormGroup className="search__field">
-                        <Input type="checkbox" name="done" id="showDone" getRef={(node) => this.done = node}/>
+                        <Input type="checkbox" name="done" id="showDone" getRef={(node) => this.done = node} />
                         <Label for="showDone">Show done</Label>{' '}
                     </FormGroup>
                     {' '}

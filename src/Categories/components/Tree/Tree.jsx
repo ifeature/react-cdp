@@ -48,7 +48,7 @@ class Tree extends Component {
                         const handleCategoryExpand = expandable ? this.handleCategoryExpand.bind(this, category) : null;
                         return (
                             (category.parent === parent || category.parent === null) &&
-                            <li key={category.id} className="categories__item">
+                            <li key={category._id} className="categories__item">
                                 <Category
                                     title={category.title}
                                     editMode={this.props.editMode}

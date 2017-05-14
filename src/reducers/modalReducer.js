@@ -1,15 +1,15 @@
 import * as types from '../actions/actionTypes';
 import initialState from './initialState';
 
-function editModeReducer(state = initialState.editMode, action) {
+function modalReducer(state = initialState.modal, action) {
     switch (action.type) {
-        case types.EDIT_MODE_ON:
+        case types.OPEN_MODAL:
             return true;
-        case types.EDIT_MODE_OFF:
+        case types.CLOSE_MODAL:
             return false;
         default:
             return state;
     }
 }
 
-export default editModeReducer;
+export default modalReducer;

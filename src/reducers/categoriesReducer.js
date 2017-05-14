@@ -1,6 +1,5 @@
 import {isEqual} from 'lodash';
 import * as types from '../actions/actionTypes';
-import initialState from './initialState';
 
 let idx;
 let relIdx;
@@ -17,7 +16,6 @@ function categoriesReducer(state = [], {type, payload}) {
             newState.splice(idx, 1, payload);
             return newState;
         case types.ADD_CATEGORY_SUCCESS:
-            console.log('success', payload);
             newState = state.map(cat => {
                 if (cat._id === payload.category.parent) {
                     cat.categories.push(payload.category._id);
@@ -25,20 +23,20 @@ function categoriesReducer(state = [], {type, payload}) {
                 return cat;
             });
             return [payload.category, ...newState];
-        case types.CATEGORY_EDIT:
+        case types.UPDATE_CATEGORY_SUCCESS:
             newState = state.map(cat => {
-                if (isEqual(cat, payload)) {
-                    cat.title = payload.title;
+                if (cat._id === payload.data._id) {
+                    cat.title = payload.data.title;
                 }
                 return cat;
             });
             return newState;
-        case types.CATEGORY_DELETE:
+        case types.DELETE_CATEGORY_SUCCESS:
             newState = state.map(cat => {
-                cat.categories = cat.categories.filter(c => c !== payload._id);
+                cat.categories = cat.categories.filter(c => c !== payload.data._id);
                 return cat;
             });
-            idx = state.findIndex(cat => isEqual(cat, payload));
+            idx = state.findIndex(cat => cat._id === payload.data._id);
             newState.splice(idx, 1);
             return newState;
         default:

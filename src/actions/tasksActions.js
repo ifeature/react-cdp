@@ -38,11 +38,6 @@ export function searchTaskFailure(error) {
     };
 }
 
-
-
-
-
-
 export function loadTasks(config) {
     return dispatch => {
         dispatch(loadTasksRequest(config));
@@ -78,6 +73,81 @@ export function loadTasksFailure(error) {
     };
 }
 
+export function addTask(config) {
+    return dispatch => {
+        dispatch(addTaskRequest(config));
+        return api.addTask(config)
+            .then(result => {
+                dispatch(addTaskSuccess(result));
+            })
+            .catch(error => {
+                dispatch(addTaskFailure(error));
+            });
+    }
+}
+
+export function addTaskRequest(result) {
+    return {
+        type: types.ADD_TASK_REQUEST,
+        payload: result
+    };
+}
+
+export function addTaskSuccess(result) {
+    return {
+        type: types.ADD_TASK_SUCCESS,
+        payload: result
+    };
+}
+
+export function addTaskFailure(error) {
+    return {
+        type: types.ADD_TASK_FAILURE,
+        error: true,
+        payload: error
+    };
+}
+
+
+
+
+export function editTask(config) {
+    return dispatch => {
+        dispatch(editTaskRequest(config));
+        return api.editTask(config)
+            .then(result => {
+                dispatch(editTaskSuccess(result));
+            })
+            .catch(error => {
+                dispatch(editTaskFailure(error));
+            });
+    }
+}
+
+export function editTaskRequest(result) {
+    return {
+        type: types.UPDATE_TASK_REQUEST,
+        payload: result
+    };
+}
+
+export function editTaskSuccess(result) {
+    return {
+        type: types.UPDATE_TASK_SUCCESS,
+        payload: result
+    };
+}
+
+export function editTaskFailure(error) {
+    return {
+        type: types.UPDATE_TASK_FAILURE,
+        error: true,
+        payload: error
+    };
+}
+
+
+
 
 
 
@@ -95,13 +165,6 @@ export function tasksEdit(task) {
 export function taskSelect(task) {
     return {
         type: types.TASK_SELECT,
-        payload: task
-    }
-}
-
-export function taskAdd(task) {
-    return {
-        type: types.TASK_ADD,
         payload: task
     }
 }

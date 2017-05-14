@@ -3,37 +3,15 @@ import { bindActionCreators } from 'redux';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import { Container, Row, Col } from 'reactstrap';
-import { cloneDeep } from 'lodash';
+import { Button, Modal, ModalHeader, ModalBody, Input, ModalFooter, Container, Row, Col } from 'reactstrap';
 
-import {ProgressBar} from '../Common';
+import {ProgressBar} from '../common';
 import Categories from '../Categories';
 import Tasks from '../Tasks';
-import Category from '../Model/Category';
-
-import ConfirmationModal from '../ConfirmationModal';
-import AddingModal from '../AddingModal';
-import EditModal from '../EditModal';
-import ErrorModal from '../ErrorModal';
 
 import * as taskActions from '../actions/tasksActions';
 import * as categoriesActions from '../actions/categoriesActions';
-
-function computeCompletedCategories(categories, storeCategories, storeTasks, completedCategories = 0, allCategories = categories.length) {
-    categories.forEach(category => {
-        const tasks = category.tasks.map(task => storeTasks.find(t => t._id === task));
-        const subCategories = category.categories.map(subCategory => storeCategories.find(c => c._id === subCategory));
-        allCategories = allCategories + subCategories.length;
-
-        if (tasks.every(task => task.done === true) || tasks.length === 0) {
-            completedCategories = completedCategories + 1;
-        }
-
-        [completedCategories] = computeCompletedCategories(subCategories, storeCategories, storeTasks, completedCategories, allCategories);
-    });
-
-    return [completedCategories, allCategories];
-}
+import * as modalActions from '../actions/modalActions';
 
 // Should be replaced by Layout component ...
 export class Content extends Component {
@@ -47,80 +25,80 @@ export class Content extends Component {
         };
     }
 
-    constructor(props, context) {
-        super(props, context);
-        this.state = {
-            categoryToEdit: null,
-            categoryToAdd: null,
-            categoryToDelete: null,
-            isCategoryAddModalOpen: false,
-            isCategoryDeleteModalOpen: false,
-            isCategoryEditModalOpen: false,
-            isErrorModalOpen: false,
-        };
-        this.handleCategorySelect = this.handleCategorySelect.bind(this);
-        this.handleCategoryAddRequest = this.handleCategoryAddRequest.bind(this);
-        this.handleCategoryAdd = this.handleCategoryAdd.bind(this);
-        this.handleCategoryDelete = this.handleCategoryDelete.bind(this);
-        this.handleCategoryExpand = this.handleCategoryExpand.bind(this);
-        this.handleCategoryAddConfirm = this.handleCategoryAddConfirm.bind(this);
-        this.handleCategoryAddCancel = this.handleCategoryAddCancel.bind(this);
-        this.handleCategoryDeleteConfirm = this.handleCategoryDeleteConfirm.bind(this);
-        this.handleCategoryDeleteCancel = this.handleCategoryDeleteCancel.bind(this);
-        this.handleCategoryEditRequest = this.handleCategoryEditRequest.bind(this);
-        this.handleCategoryEditConfirm = this.handleCategoryEditConfirm.bind(this);
-        this.handleCategoryEditCancel = this.handleCategoryEditCancel.bind(this);
-        this.handleTaskAdd = this.handleTaskAdd.bind(this);
-        this.handleSearch = this.handleSearch.bind(this);
-        this.handleErrorModalClose = this.handleErrorModalClose.bind(this);
-    }
+    state = {
+        categoryToEdit: null,
+        categoryToAdd: null,
+        categoryToDelete: null
+    };
 
     renderErrorModal() {
         return (
-            !this.props.selectedCategory &&
-            <ErrorModal
-                isOpen={this.state.isErrorModalOpen}
-                onConfirm={this.handleErrorModalClose}
-            />
+            <Modal isOpen={!this.props.selectedCategory && this.props.modal}>
+                <ModalHeader>Error Modal</ModalHeader>
+                <ModalBody>
+                    You should select category fssirst.
+                </ModalBody>
+                <ModalFooter>
+                    <Button color="primary" onClick={this.handleErrorModalClose}>Ok</Button>
+                </ModalFooter>
+            </Modal>
         );
     }
 
     renderConfirmationModal() {
         return (
-            this.state.categoryToDelete &&
-            <ConfirmationModal
-                isOpen={this.state.isCategoryDeleteModalOpen}
-                item={this.state.categoryToDelete ? this.state.categoryToDelete.title : null}
-                onConfirm={this.handleCategoryDeleteConfirm}
-                onCancel={this.handleCategoryDeleteCancel}
-            />
+            <Modal
+                isOpen={this.state.categoryToDelete && this.props.modal}
+                toggle={this.toggle}
+                className={this.props.className}
+            >
+                <ModalHeader>Confirmation Modal</ModalHeader>
+                <ModalBody>
+                    Are you sure you want to delete {this.state.categoryToDelete ? this.state.categoryToDelete.title : null}?
+                </ModalBody>
+                <ModalFooter>
+                    <Button color="primary" onClick={this.handleCategoryDeleteConfirm}>Ok</Button>{' '}
+                    <Button color="secondary" onClick={this.handleCategoryDeleteCancel}>Cancel</Button>
+                </ModalFooter>
+            </Modal>
         );
     }
 
     renderAddingModal() {
         return (
-            this.state.categoryToAdd &&
-            <AddingModal
-                isOpen={this.state.isCategoryAddModalOpen}
-                onConfirm={this.handleCategoryAddConfirm}
-                onCancel={this.handleCategoryAddCancel}
-            />
+            <Modal isOpen={this.state.categoryToAdd && this.props.modal}>
+                <ModalHeader>Adding Modal</ModalHeader>
+                <ModalBody>
+                    <Input placeholder="Enter category title" getRef={(node) => this.input = node} />
+                </ModalBody>
+                <ModalFooter>
+                    <Button color="primary" onClick={this.handleCategoryAddConfirm}>Ok</Button>{' '}
+                    <Button color="secondary" onClick={this.handleCategoryAddCancel}>Cancel</Button>
+                </ModalFooter>
+            </Modal>
         );
     }
 
     renderEditModal() {
         return (
-            this.state.categoryToEdit &&
-            <EditModal
-                title={this.state.categoryToEdit.title}
-                isOpen={this.state.isCategoryEditModalOpen}
-                onConfirm={this.handleCategoryEditConfirm}
-                onCancel={this.handleCategoryEditCancel}
-            />
+            <Modal isOpen={this.state.categoryToEdit && this.props.modal}>
+                <ModalHeader>Modal title</ModalHeader>
+                <ModalBody>
+                    <Input
+                        placeholder="Enter category title"
+                        defaultValue={this.state.categoryToEdit ? this.state.categoryToEdit.title : ''}
+                        getRef={(node) => this.input = node}
+                    />
+                </ModalBody>
+                <ModalFooter>
+                    <Button color="primary" onClick={this.handleCategoryEditConfirm}>Ok</Button>{' '}
+                    <Button color="secondary" onClick={this.handleCategoryEditCancel}>Cancel</Button>
+                </ModalFooter>
+            </Modal>
         );
     }
 
-    handleCategoryAddRequest(parent) {
+    handleCategoryAddRequest = (parent) => {
         const category = {
             _id: Math.random().toString(16).slice(2),
             parent,
@@ -129,90 +107,71 @@ export class Content extends Component {
             tasks: [],
             categories: []
         };
-        this.setState({
-            isCategoryAddModalOpen: !this.state.isCategoryAddModalOpen,
-            categoryToAdd: category
-        });
-    }
+        this.setState({ categoryToAdd: category });
+        this.props.openModal();
+    };
 
-    handleCategoryAdd(title, parent, cb) {
+    handleCategoryAdd = (title, parent, cb) => {
         this.props.addCategory({ title, parent });
         cb && cb();
-    }
+    };
 
-    handleCategoryAddConfirm(title) {
+    handleCategoryAddConfirm = () => {
         const category = this.state.categoryToAdd;
-        category.title = title;
-        this.setState({
-            isCategoryAddModalOpen: !this.state.isCategoryAddModalOpen,
-            categoryToAdd: null
-        });
-        this.props.addCategory({ title, parent: category.parent });
-    }
+        category.title = this.input.value;
+        this.setState({ categoryToAdd: null });
+        this.props.addCategory({ title: this.input.value, parent: category.parent });
+        this.props.closeModal();
+    };
 
-    handleCategoryAddCancel() {
-        this.setState({
-            isCategoryAddModalOpen: !this.state.isCategoryAddModalOpen,
-            categoryToAdd: null
-        });
-    }
+    handleCategoryAddCancel = () => {
+        this.setState({ categoryToAdd: null });
+        this.props.closeModal();
+    };
 
-    handleCategoryDelete(category) {
-        this.setState({
-            isCategoryDeleteModalOpen: !this.state.isCategoryDeleteModalOpen,
-            categoryToDelete: category
-        });
-    }
+    handleCategoryDelete = (category) => {
+        this.setState({ categoryToDelete: category });
+        this.props.openModal();
+    };
 
-    handleCategoryDeleteConfirm() {
-        this.props.categoryDelete(this.state.categoryToDelete);
-        this.setState({
-            isCategoryDeleteModalOpen: !this.state.isCategoryDeleteModalOpen,
-            categoryToDelete: null,
-            selectedCategory: null
-        });
-    }
+    handleCategoryDeleteConfirm = () => {
+        this.props.deleteCategory({ id: this.state.categoryToDelete._id });
+        this.setState({ categoryToDelete: null, selectedCategory: null });
+        this.props.closeModal();
+    };
 
-    handleCategoryDeleteCancel() {
-        this.setState({
-            isCategoryDeleteModalOpen: !this.state.isCategoryDeleteModalOpen
-        });
+    handleCategoryDeleteCancel = () => {
         this.props.categorySelect({});
-    }
+        this.props.closeModal();
+    };
 
-    handleCategoryEditRequest(category) {
-        this.setState({
-            isCategoryEditModalOpen: !this.state.isCategoryEditModalOpen,
-            categoryToEdit: category
-        });
-    }
+    handleCategoryEditRequest = (category) => {
+        this.setState({ categoryToEdit: category });
+        this.props.openModal();
+    };
 
-    handleCategoryEditConfirm(title) {
+    handleCategoryEditConfirm = (title) => {
         const category = this.state.categoryToEdit;
         category.title = title;
-        this.setState({
-            isCategoryEditModalOpen: !this.state.isCategoryEditModalOpen,
-            categoryToEdit: null
-        });
-        this.props.categoryEdit(category);
-    }
+        this.setState({ categoryToEdit: null });
+        this.props.editCategory({ id: category._id, title: this.input.value });
+        this.props.closeModal();
+    };
 
-    handleCategoryEditCancel() {
-        this.setState({
-            isCategoryEditModalOpen: !this.state.isCategoryEditModalOpen,
-            categoryToEdit: null
-        });
-    }
+    handleCategoryEditCancel = () => {
+        this.setState({ categoryToEdit: null });
+        this.props.closeModal();
+    };
 
-    handleCategorySelect(category) {
+    handleCategorySelect = (category) => {
         this.props.categorySelect(category);
-    }
+    };
 
-    handleCategoryExpand(category) {
+    handleCategoryExpand = (category) => {
         this.props.categoryExpand(category);
-    }
+    };
 
-    handleTaskAdd(title, cb) {
+    handleTaskAdd = (title, cb) => {
         const task = {
             _id: Math.random().toString(16).slice(2),
             title,
@@ -220,33 +179,24 @@ export class Content extends Component {
             done: false
         };
         if (!this.props.selectedCategory) {
-            this.setState({
-                isErrorModalOpen: true
-            });
+            this.props.openModal();
         } else {
-            this.props.taskAdd(task);
+            this.props.addTask({ title, category: this.props.selectedCategory._id });
             cb && cb();
         }
-    }
+    };
 
-    handleErrorModalClose() {
-        this.setState({
-            isErrorModalOpen: false
-        });
-    }
-
-    handleSearch() {
-
-    }
+    handleErrorModalClose = () => {
+        this.props.closeModal();
+    };
 
     render() {
-        // const [completedCategories, allCategories] = computeCompletedCategories(this.props.categories, this.props.categories, this.props.tasks);
         const contentClassName = classnames('content', this.props.className);
         return (
             <main className={contentClassName}>
                 <Container>
                     <Row>
-                        {/*<ProgressBar value={completedCategories} max={allCategories}/>*/}
+                        <ProgressBar categories={this.props.categories} tasks={this.props.tasks} />
                     </Row>
                     <Row>
                         <Col xs="12" md="6">
@@ -279,13 +229,20 @@ export class Content extends Component {
     }
 }
 
-function mapStateToProps({editMode, selected: {category: selectedCategory}, categories, tasks, search: { data, pristine }}) {
+function mapStateToProps({
+    editMode,
+    modal,
+    selected: {category: selectedCategory},
+    categories,
+    tasks,
+    search: { data, pristine }
+}) {
     const foundTasks = pristine ? [] : data;
-    return {editMode, selectedCategory, categories, tasks, foundTasks};
+    return {editMode, selectedCategory, categories, tasks, foundTasks, modal};
 }
 
 function mapDispatchToProps(dispatch) {
-    return bindActionCreators({...categoriesActions, ...taskActions}, dispatch);
+    return bindActionCreators({...categoriesActions, ...taskActions, ...modalActions}, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Content);
