@@ -1,5 +1,6 @@
 import {isEqual} from 'lodash';
 import * as types from '../actions/actionTypes';
+import expandedReducer from './expandedReducer';
 
 let idx;
 let relIdx;
@@ -10,11 +11,12 @@ function categoriesReducer(state = [], {type, payload}) {
         case types.LOAD_CATEGORIES_SUCCESS:
             return payload.categories;
         case types.CATEGORY_EXPAND:
-            payload.expanded = !payload.expanded;
-            idx = state.findIndex(cat => isEqual(cat, payload));
-            newState = state.slice();
-            newState.splice(idx, 1, payload);
-            return newState;
+            return state.map(category => {
+                if (isEqual(category, payload)) {
+                    return expandedReducer(category, { type, payload })
+                }
+                return category;
+            });
         case types.ADD_CATEGORY_SUCCESS:
             newState = state.map(cat => {
                 if (cat._id === payload.category.parent) {
