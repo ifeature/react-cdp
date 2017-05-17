@@ -1,9 +1,9 @@
 import {isEqual} from 'lodash';
 import * as types from '../actions/actionTypes';
 import expandedReducer from './expandedReducer';
+import categoryReducer from './categoryReducer';
 
 let idx;
-let relIdx;
 let newState;
 
 function categoriesReducer(state = [], {type, payload}) {
@@ -28,9 +28,8 @@ function categoriesReducer(state = [], {type, payload}) {
         case types.UPDATE_CATEGORY_SUCCESS:
             newState = state.map(cat => {
                 if (cat._id === payload.data._id) {
-                    cat.title = payload.data.title;
+                    return categoryReducer(cat, { type, payload });
                 }
-                return cat;
             });
             return newState;
         case types.DELETE_CATEGORY_SUCCESS:
