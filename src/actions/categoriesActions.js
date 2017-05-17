@@ -1,6 +1,7 @@
 import * as types from './actionTypes';
 import Api from '../Api';
 
+console.log('!!!!', Api);
 const api = new Api();
 
 /**
